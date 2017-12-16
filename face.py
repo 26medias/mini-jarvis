@@ -7,7 +7,7 @@ import math
 #https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
 face_cascade = cv2.CascadeClassifier('haar/haarcascade_frontalface_default.xml')
 #https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
-eye_cascade = cv2.CascadeClassifier('haar/haarcascade_eye_tree_eyeglasses.xml')
+eye_cascade = cv2.CascadeClassifier('haar/haarcascade_eye.xml')
 
 cap = cv2.VideoCapture(0)
 
@@ -37,7 +37,7 @@ while 1:
 			area1 = ew1*eh1
 			area2 = ew2*eh2
 			diff = math.fabs(area1-area2)/min(area1,area2)
-			if diff <= 0.3:
+			if diff <= 0.4:
 				color = color_ok
 			cv2.rectangle(roi_color,(ex1,ey1),(ex1+ew1,ey1+eh1),color,2)
 			cv2.rectangle(roi_color,(ex2,ey2),(ex2+ew2,ey2+eh2),color,2)

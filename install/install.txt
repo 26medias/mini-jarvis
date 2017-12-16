@@ -1,0 +1,5 @@
+numpy
+cv2
+
+dlib:		https://github.com/charlielito/install-dlib-python-windows
+imutils:	https://github.com/jrosebr1/imutils
