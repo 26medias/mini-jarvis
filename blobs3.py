@@ -8,13 +8,20 @@ import cv2
 import jarvisutils
 
 
+color_ok = (222, 169, 48)
+color_not = (64, 58, 229)
+color_found = (0, 255, 0)
+
 cap = cv2.VideoCapture(0)
 
 previous = []
 started = False
 f = 0
 
+
+
 while 1:
+	#print "--------------------"
 	# load the input image, resize it, and convert it to grayscale
 	ret, image	= cap.read()
 	frame		= imutils.resize(image, width=500)
@@ -25,14 +32,29 @@ while 1:
 		previous	= gray
 		started		= True
 	
-	cv2.imshow("image", image)
 	
 	frameDelta	= cv2.absdiff(previous, gray)
 	thresh		= cv2.threshold(frameDelta, 20, 255, cv2.THRESH_BINARY)[1]
 	thresh		= cv2.dilate(thresh, None, iterations=1)
-	#(cnts, _)	= cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	thresh		= cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
 	
-	cv2.imshow("Output", thresh)
+	
+	
+	blobs, mini	= jarvisutils.getBlobs3(thresh, 10);
+	
+	rect = (0,0,0,0,0)
+	
+	for blob in blobs:
+		(x,y,w,h), (x2,y2,w2,h2) = blob
+		if w*h > rect[0]:
+			rect = (w*h,x,y,w,h)
+			#cv2.rectangle(frame,(x,y),(x+w,y+h),color_not,3)
+	
+	cv2.rectangle(frame,(rect[1],rect[2]),(rect[1]+rect[3],rect[2]+rect[4]),color_not,3)
+		
+	cv2.imshow("frame", frame)
+	cv2.imshow("mini", mini)
+	
 	
 	f = f+1
 	

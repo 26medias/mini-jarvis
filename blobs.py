@@ -9,61 +9,35 @@ import jarvisutils
 
 color_ok = (222, 169, 48)
 color_not = (64, 58, 229)
-
-
-def getBlobFrom(gray, x, y):
-	xs		= []
-	ys		= []
-	mapped	= [[ 0 for _x in range(0,gray.shape[1])] for _y in range(0,gray.shape[0])]
-	
-	edge = [(x, y)]
-	while edge:
-		newedge = []
-		for (x, y) in edge:
-			for (_x, _y) in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
-				if _x > gray.shape[1] or _x <= 0 or _y > gray.shape[0] or _y <= 0 or mapped[_y][_x]==1:
-					continue
-				mapped[_y][_x]	= 1
-				if gray[_y][_x] > 0:
-					newedge.append((_x, _y))
-					xs.append(_x)
-					ys.append(_y)
-					#image[_y, _x] = [255,0,0]
-		edge = newedge
-	
-	bx	= min(xs)
-	by	= min(ys)
-	bx2	= max(xs)
-	by2	= max(ys)
-	bw	= max(xs)-bx
-	bh	= max(ys)-by
-	
-	return (bx,by,bw,bh,bx2,by2)
-	
-
-
-def blobs(image, size):
-	
-	gray		= cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	gray		= cv2.blur(gray,(size,size))
-	gray		= cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)[1]
-	gray		= cv2.dilate(gray, None, iterations=max([0,int(size/2)]))
-	
-	(bx,by,bw,bh,bx2,by2) = getBlobFrom(gray, 297, 165)
-	
-	cv2.rectangle(image,(bx,by),(bx2,by2),color_ok,1)
-	
-	cv2.imshow("gray", gray)
-	cv2.imshow("image", image)
-	
+color_found = (0, 255, 0)
 
 
 
 
-image		= cv2.imread('images/movement.png')
+image	= cv2.imread('images/movement.png')
 
-blobs(image, 10);
+blobs	= jarvisutils.getBlobs2(image, 5);
+print blobs
 
+for blob in blobs:
+	(x,y,w,h) = blob
+	#print x,y,w,h
+	cv2.rectangle(image,(x,y),(x+w,y+h),color_found,1)
+	#images.append(jarvisutils.img_crop(image, x, y, w, h))
+
+cv2.imshow("image", image)
+
+#images	= []
+#images.append(image)
+#for blob in blobs:
+#	(x,y,w,h) = blob
+#	print x,y,w,h
+#	images.append(jarvisutils.img_crop(image, x, y, w, h))
+#	cv2.rectangle(image,(x,y),(x+w,y+h),color_found,1)
+
+
+#output = jarvisutils.stack_line(images, 200)
+#cv2.imshow("Output", output)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
